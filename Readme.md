@@ -10,7 +10,7 @@ Some nodes, trying to understand the format, can be found here: [Specification](
 
 ## Testfiles:
 
-om3 Testfiles can be found in the [tests/data](.tests/data) dir.
+om3 Testfiles can be found in the [tests/data](./tests/data) dir.
 
 ## License
 
