@@ -17,7 +17,7 @@ Starts with "HOME3DF\n"
 - 1 little endian binary unsigned integer 32-bit : # faces
 - 1 little endian binary unsigned integer 32-bit : # vertices per face
 - #faces * #vertices-per-faces little endian binary unsigend integers 32-bit : vertex indices referencing coords in Point Coord Section
-- some unknown stuff, looks like little endian binary unsigned integers 32-bit, some sort of indices. Unsure what it is.
+- some unknown stuff, looks like little endian binary unsigned integers 32-bit, some sort of indices. Unsure what it is, maybe for alignment. Needs to be checked wit different files.
 
 ## Vertex List Section
 
