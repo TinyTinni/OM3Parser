@@ -1,6 +1,5 @@
 use om3_parser_rs;
 use std::fs;
-use std::str;
 
 #[test]
 fn load_cube_point_cloud() {
