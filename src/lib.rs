@@ -2,9 +2,9 @@ extern crate nom;
 
 use nom::branch::alt;
 use nom::bytes::streaming::tag;
-use nom::character::streaming::none_of;
+use nom::bytes::streaming::take_till;
 use nom::combinator::opt;
-use nom::multi::{count, many0};
+use nom::multi::count;
 use nom::number::streaming::be_f32;
 use nom::number::streaming::be_u32;
 use nom::IResult;
@@ -75,11 +75,15 @@ pub fn parse_om3(input: &[u8]) -> IResult<&[u8], Om3Out> {
     let (input, _) = parse_header(input)?;
     let (input, face_polygon) = opt(parse_face_polygon)(input)?;
 
-    let (input, _) = many0(none_of("p"))(input)?; // skip some unknown stuff. attributes per face?
+    // skip some unknown stuff. Maybe attributes per face? 
+    // 'p' for the start of 'point_cloud'
+    let (input, _) = take_till(|s| s==b'p')(input)?; 
 
     let (input, point_cloud) = parse_point_cloud(input)?;
 
-    let (input, _) = many0(tag(b"\x00"))(input)?;
+    // skip empty field until the end
+    let (input, _) = take_till(|s| s!=b'\x00')(input)?; 
+    
     let (input, _) = parse_end(input)?;
     Ok((
         input,
