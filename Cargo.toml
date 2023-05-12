@@ -2,7 +2,7 @@
 name = "om3_parser-rs"
 version = "0.1.0"
 authors = ["Tinni <tinni@mailbox.org>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-nom = "7"
+nom = "7.1.3"
