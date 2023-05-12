@@ -1,4 +1,5 @@
 # OM3 Parser
+[![Rust](https://github.com/TinyTinni/parser_om3/actions/workflows/rust.yml/badge.svg)](https://github.com/TinyTinni/parser_om3/actions/workflows/rust.yml)
 
 Parses [MVTec's Halcon](https://www.mvtec.com/de/produkte/halcon/) proprietary file format for 3D meshes.
 
