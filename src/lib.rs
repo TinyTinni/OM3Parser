@@ -105,7 +105,7 @@ mod tests {
         //let input2 = b"HOME3DF\x0A\x00\x01\x00\x0B";
         let result = parse_header(input);
 
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
         let (left_input, _) = result.unwrap();
 
         assert_eq!(left_input, b"");
@@ -113,7 +113,7 @@ mod tests {
         let input = b"\x48\x4F\x4D\x33\x44\x46\x0A\x00\x01\x00\x0C";
         let result = parse_header(input);
 
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
         let (left_input, _) = result.unwrap();
 
         assert_eq!(left_input, b"");
@@ -124,7 +124,7 @@ mod tests {
         let input = b"\x46\x44\x33\x4D\x4F\x48\x2E";
         let result = parse_end(input);
 
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
         let (left_input, _) = result.unwrap();
 
         assert_eq!(left_input, b"");
@@ -135,7 +135,7 @@ mod tests {
         let input = b"point_coord\x00\x00\x00\x01\x3f\x80\x00\x00\x40\x00\x00\x00\x40\x40\x00\x00";
 
         let result = parse_point_cloud(input);
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
 
         let (left, pc) = result.unwrap();
         assert_eq!(left, []);
@@ -153,7 +153,7 @@ mod tests {
         let input = b"face_polygon\x00\x00\x00\x01\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03";
 
         let result = parse_face_polygon(input);
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
 
         let (left, fp) = result.unwrap();
         assert_eq!(left, []);
