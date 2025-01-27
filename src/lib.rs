@@ -8,6 +8,7 @@ use nom::multi::count;
 use nom::number::streaming::be_f32;
 use nom::number::streaming::be_u32;
 use nom::IResult;
+use nom::Parser;
 
 struct Header {}
 
@@ -31,59 +32,60 @@ pub struct Om3Out {
 
 fn parse_header(input: &[u8]) -> IResult<&[u8], Header> {
     //let (input, _) = tag(b"HOME3DF\0xA\x00\x01\x00")(input)?;
-    let (input, _) = tag(b"\x48\x4F\x4D\x33\x44\x46\x0A\x00\x01\x00")(input)?;
-    let (input, _) = alt((tag(b"\x0B"), tag(b"\x0C")))(input)?;
+    let (input, _) = tag("\x48\x4F\x4D\x33\x44\x46\x0A\x00\x01\x00")(input)?;
+    let (input, _) = alt((tag("\x0B"), tag("\x0C"))).parse(input)?;
 
     Ok((input, Header {}))
 }
 
 fn parse_end(input: &[u8]) -> IResult<&[u8], ()> {
     //let (input, _) = tag(b"FD3EMOH\x2E")(input)?;
-    let (input, _) = tag(b"\x46\x44\x33\x4D\x4F\x48\x2E")(input)?;
+    let (input, _) = tag("\x46\x44\x33\x4D\x4F\x48\x2E")(input)?;
     Ok((input, ()))
 }
 
 fn parse_point_cloud(input: &[u8]) -> IResult<&[u8], PointCloud> {
-    let (input, _) = tag(b"point_coord")(input)?;
+    let (input, _) = tag("point_coord")(input)?;
     let (input, n_vertices) = be_u32(input)?;
 
-    let (input, x) = count(be_f32, n_vertices as usize)(input)?;
-    let (input, y) = count(be_f32, n_vertices as usize)(input)?;
-    let (input, z) = count(be_f32, n_vertices as usize)(input)?;
+    let (input, x) = count(be_f32, n_vertices as usize).parse(input)?;
+    let (input, y) = count(be_f32, n_vertices as usize).parse(input)?;
+    let (input, z) = count(be_f32, n_vertices as usize).parse(input)?;
 
     Ok((input, PointCloud { x, y, z }))
 }
 
 fn parse_face(input: &[u8], n_indices: u32) -> IResult<&[u8], Face> {
-    let (input, indices) = count(be_u32, n_indices as usize)(input)?;
+    let (input, indices) = count(be_u32, n_indices as usize).parse(input)?;
     Ok((input, Face { indices }))
 }
 
 fn parse_face_polygon(input: &[u8]) -> IResult<&[u8], FacePolygon> {
-    let (input, _) = tag(b"face_polygon")(input)?;
+    let (input, _) = tag("face_polygon")(input)?;
     let (input, n_faces) = be_u32(input)?;
     let (input, n_indices) = be_u32(input)?;
 
     let indices_per_face = n_indices / n_faces;
 
-    let (input, faces) = count(|i| parse_face(i, indices_per_face), n_faces as usize)(input)?;
+    let (input, faces) =
+        count(|i| parse_face(i, indices_per_face), n_faces as usize).parse(input)?;
 
     Ok((input, FacePolygon { faces }))
 }
 
 pub fn parse_om3(input: &[u8]) -> IResult<&[u8], Om3Out> {
     let (input, _) = parse_header(input)?;
-    let (input, face_polygon) = opt(parse_face_polygon)(input)?;
+    let (input, face_polygon) = opt(parse_face_polygon).parse(input)?;
 
-    // skip some unknown stuff. Maybe attributes per face? 
+    // skip some unknown stuff. Maybe attributes per face?
     // 'p' for the start of 'point_cloud'
-    let (input, _) = take_till(|s| s==b'p')(input)?; 
+    let (input, _) = take_till(|s| s == b'p')(input)?;
 
     let (input, point_cloud) = parse_point_cloud(input)?;
 
     // skip empty field until the end
-    let (input, _) = take_till(|s| s!=b'\x00')(input)?; 
-    
+    let (input, _) = take_till(|s| s != b'\x00')(input)?;
+
     let (input, _) = parse_end(input)?;
     Ok((
         input,

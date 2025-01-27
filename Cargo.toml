@@ -5,4 +5,4 @@ authors = ["Tinni <tinni@mailbox.org>"]
 edition = "2021"
 
 [dependencies]
-nom = "7.1.3"
+nom = "^8"
